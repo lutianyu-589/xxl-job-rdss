@@ -5,3 +5,8 @@
 target/
 .DS_Store
 .gitattributes
+# Gradle generated files
+build/
+.gradle/
+/out/
+/.gradle/
