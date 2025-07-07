@@ -32,7 +32,7 @@ public class WebhookAlarm implements JobAlarm {
         boolean alarmResult = true;
         // 如果联系人为空那么就不发告警
         if(info.getAlarmContacts() == null || info.getAlarmContacts().isEmpty()) {
-            log.info("联系人为空，不发送告警");
+            log.info("{} : 联系人为空，不发送告警",jobLog.getId());
             return alarmResult;
         }
         WebhookRequest requestBody = getRequestBody(info, jobLog);
