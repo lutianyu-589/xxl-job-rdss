@@ -14,6 +14,7 @@
 
 	    <result column="author" property="author" />
 	    <result column="alarm_email" property="alarmEmail" />
+		<result column="alarm_contacts" property="alarmContacts"/>
 
 		<result column="schedule_type" property="scheduleType" />
 		<result column="schedule_conf" property="scheduleConf" />
@@ -39,13 +40,14 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
+        t.id,
 		t.job_group,
 		t.job_desc,
 		t.add_time,
 		t.update_time,
 		t.author,
 		t.alarm_email,
+		t.alarm_contacts,
 		t.schedule_type,
 		t.schedule_conf,
 		t.misfire_strategy,
@@ -63,7 +65,7 @@
 		t.trigger_status,
 		t.trigger_last_time,
 		t.trigger_next_time
-	</sql>
+    </sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
@@ -119,6 +121,7 @@
 			update_time,
 			author,
 			alarm_email,
+		    alarm_contacts,
 			schedule_type,
 			schedule_conf,
 			misfire_strategy,
@@ -143,6 +146,7 @@
 			#{updateTime},
 			#{author},
 			#{alarmEmail},
+		    #{alarmContacts},
 			#{scheduleType},
 			#{scheduleConf},
 			#{misfireStrategy},
@@ -181,6 +185,7 @@
 			update_time = #{updateTime},
 			author = #{author},
 			alarm_email = #{alarmEmail},
+			alarm_contacts = #{alarmContacts},
 			schedule_type = #{scheduleType},
 			schedule_conf = #{scheduleConf},
 			misfire_strategy = #{misfireStrategy},
