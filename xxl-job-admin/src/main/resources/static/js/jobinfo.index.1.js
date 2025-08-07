@@ -25,9 +25,15 @@ $(function () {
         //"scrollX": true,	// scroll x，close self-adaption
         "columns": [
             {
-                "data": 'id',
+                "data": 'jobName',
                 "bSortable": false,
                 "visible": true,
+                "width": '7%'
+            },
+            {
+                "data": 'id',
+                "bSortable": false,
+                "visible": false,
                 "width": '7%'
             },
             {

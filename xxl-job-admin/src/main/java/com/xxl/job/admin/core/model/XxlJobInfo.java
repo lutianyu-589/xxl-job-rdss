@@ -10,7 +10,7 @@ import java.util.Date;
 public class XxlJobInfo {
 
     private int id;                // 主键ID
-
+    private String jobName;
     private int jobGroup;        // 执行器主键ID
     private String jobDesc;
 
@@ -243,5 +243,13 @@ public class XxlJobInfo {
 
     public void setAlarmContacts(String alarmContacts) {
         this.alarmContacts = alarmContacts;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 }

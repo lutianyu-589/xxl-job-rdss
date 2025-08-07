@@ -52,7 +52,24 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
         // valid：jobHandler + jobThread
         GlueTypeEnum glueTypeEnum = GlueTypeEnum.match(triggerParam.getGlueType());
-        if (GlueTypeEnum.BEAN == glueTypeEnum) {
+        if(GlueTypeEnum.MICROBATCH==glueTypeEnum){
+            // valid old jobThread
+            if (jobThread != null &&
+                    !(jobThread.getHandler() instanceof ScriptJobHandler
+                            && ((ScriptJobHandler) jobThread.getHandler()).getGlueUpdatetime()==triggerParam.getGlueUpdatetime() )) {
+                // change script or gluesource updated, need kill old thread
+                removeOldReason = "change job source or glue type, and terminate the old job thread.";
+
+                jobThread = null;
+                jobHandler = null;
+            }
+
+            // valid handler
+            if (jobHandler == null) {
+                jobHandler = new ScriptJobHandler(triggerParam.getJobId(), triggerParam.getGlueUpdatetime(), triggerParam.getGlueSource(), GlueTypeEnum.match(triggerParam.getGlueType()));
+            }
+        }
+        else if (GlueTypeEnum.BEAN == glueTypeEnum) {
 
             // new jobhandler
             IJobHandler newJobHandler = XxlJobExecutor.loadJobHandler(triggerParam.getExecutorHandler());

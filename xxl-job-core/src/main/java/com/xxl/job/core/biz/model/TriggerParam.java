@@ -9,7 +9,7 @@ public class TriggerParam implements Serializable{
     private static final long serialVersionUID = 42L;
 
     private int jobId;
-
+    private String jobName;
     private String executorHandler;
     private String executorParams;
     private String executorBlockStrategy;
@@ -122,11 +122,19 @@ public class TriggerParam implements Serializable{
         this.broadcastTotal = broadcastTotal;
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
 
     @Override
     public String toString() {
         return "TriggerParam{" +
                 "jobId=" + jobId +
+                ", jobName='" + jobName + '\'' +
                 ", executorHandler='" + executorHandler + '\'' +
                 ", executorParams='" + executorParams + '\'' +
                 ", executorBlockStrategy='" + executorBlockStrategy + '\'' +

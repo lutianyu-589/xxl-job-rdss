@@ -5,7 +5,7 @@
 
 	<resultMap id="XxlJobInfo" type="com.xxl.job.admin.core.model.XxlJobInfo" >
 		<result column="id" property="id" />
-
+		<result column="job_name" property="jobName"/>
 		<result column="job_group" property="jobGroup" />
 	    <result column="job_desc" property="jobDesc" />
 
@@ -41,6 +41,7 @@
 
 	<sql id="Base_Column_List">
         t.id,
+        t.job_name,
 		t.job_group,
 		t.job_desc,
 		t.add_time,

@@ -11,8 +11,8 @@ public enum GlueTypeEnum {
     GLUE_PYTHON("GLUE(Python)", true, "python", ".py"),
     GLUE_PHP("GLUE(PHP)", true, "php", ".php"),
     GLUE_NODEJS("GLUE(Nodejs)", true, "node", ".js"),
-    GLUE_POWERSHELL("GLUE(PowerShell)", true, "powershell", ".ps1");
-
+    GLUE_POWERSHELL("GLUE(PowerShell)", true, "powershell", ".ps1"),
+    MICROBATCH("MICROBATCH", true, "bash", null);
     private String desc;
     private boolean isScript;
     private String cmd;
