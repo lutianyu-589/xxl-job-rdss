@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class WebhookRequest {
     protected int jobId;
+    protected String jobName;
     protected String jobDesc;
     protected int executorId;
     protected String appName;
@@ -113,5 +114,13 @@ public class WebhookRequest {
 
     public void setHandleMsg(String handleMsg) {
         this.handleMsg = handleMsg;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 }

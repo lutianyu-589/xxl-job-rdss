@@ -43,6 +43,35 @@ public class XxlJobInfo {
     private int triggerStatus;        // 调度状态：0-停止，1-运行
     private long triggerLastTime;    // 上次调度时间
     private long triggerNextTime;    // 下次调度时间
+    public XxlJobInfo() {}
+    public XxlJobInfo(XxlJobInfo job) {
+        this.id = job.getId();
+        this.jobName = job.getJobName();
+        this.jobGroup = job.getJobGroup();
+        this.jobDesc = job.getJobDesc();
+        this.addTime = job.getAddTime();
+        this.updateTime = job.getUpdateTime();
+        this.author = job.getAuthor();
+        this.alarmEmail = job.getAlarmEmail();
+        this.alarmContacts = job.getAlarmContacts();
+        this.scheduleType = job.getScheduleType();
+        this.scheduleConf = job.getScheduleConf();
+        this.misfireStrategy = job.getMisfireStrategy();
+        this.executorRouteStrategy = job.getExecutorRouteStrategy();
+        this.executorHandler = job.getExecutorHandler();
+        this.executorParam = job.getExecutorParam();
+        this.executorBlockStrategy = job.getExecutorBlockStrategy();
+        this.executorTimeout = job.getExecutorTimeout();
+        this.executorFailRetryCount = job.getExecutorFailRetryCount();
+        this.glueType = job.getGlueType();
+        this.glueSource = job.getGlueSource();
+        this.glueRemark = job.getGlueRemark();
+        this.glueUpdatetime = job.getGlueUpdatetime();
+        this.childJobId = job.getChildJobId();
+        this.triggerStatus = job.getTriggerStatus();
+        this.triggerLastTime = job.getTriggerLastTime();
+        this.triggerNextTime = job.getTriggerNextTime();
+    }
 
 
     public int getId() {

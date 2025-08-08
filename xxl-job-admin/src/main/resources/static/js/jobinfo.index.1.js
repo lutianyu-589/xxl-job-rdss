@@ -25,16 +25,16 @@ $(function () {
         //"scrollX": true,	// scroll x，close self-adaption
         "columns": [
             {
-                "data": 'jobName',
-                "bSortable": false,
-                "visible": true,
-                "width": '7%'
-            },
-            {
                 "data": 'id',
                 "bSortable": false,
                 "visible": false,
                 "width": '7%'
+            },
+            {
+                "data": 'jobName',
+                "bSortable": false,
+                "visible": true,
+                "width": '12%'
             },
             {
                 "data": 'jobGroup',
@@ -52,7 +52,7 @@ $(function () {
             {
                 "data": 'jobDesc',
                 "visible": true,
-                "width": '25%'
+                "width": '20%'
             },
             {
                 "data": 'scheduleType',
@@ -136,7 +136,7 @@ $(function () {
 
                         // code url
                         var codeBtn = "";
-                        if ('BEAN' != row.glueType) {
+                        if ('BEAN' != row.glueType && 'MICROBATCH' != row.glueType) {
                             var codeUrl = base_url + '/jobcode?jobId=' + row.id;
                             codeBtn = '<li><a href="' + codeUrl + '" target="_blank" >GLUE IDE</a></li>\n';
                             codeBtn += '<li class="divider"></li>\n';
@@ -546,6 +546,7 @@ $(function () {
         // fill base
         $("#updateModal .form input[name='id']").val(row.id);
         $('#updateModal .form select[name=jobGroup] option[value=' + row.jobGroup + ']').prop('selected', true);
+        $("#updateModal .form input[name='jobName']").val(row.jobName);
         $("#updateModal .form input[name='jobDesc']").val(row.jobDesc);
         $("#updateModal .form input[name='author']").val(row.author);
         $("#updateModal .form input[name='alarmEmail']").val(row.alarmEmail);
@@ -703,6 +704,7 @@ $(function () {
         // fill base
         $('#addModal .form select[name=jobGroup] option[value=' + row.jobGroup + ']').prop('selected', true);
         $("#addModal .form input[name='jobDesc']").val(row.jobDesc);
+        $("#addModal .form input[name='jobName']").val(row.jobName);
         $("#addModal .form input[name='author']").val(row.author);
         $("#addModal .form input[name='alarmEmail']").val(row.alarmEmail);
         $("#addModal .form input[name='alarmContacts']").val(row.alarmContacts);
@@ -745,4 +747,59 @@ $(function () {
         $('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
     });
 
+    $(".export").click(function (){
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', base_url + "/jobinfo/export", true);
+        xhr.responseType = 'blob';
+        // 设置请求头，指定内容类型为JSON
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                console.log(`Progress: ${percentComplete}%`);
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const blob = new Blob([xhr.response], { type: 'application/octet-stream' });
+                const downloadUrl = URL.createObjectURL(blob);
+                const disposition = xhr.getResponseHeader('Content-Disposition');
+                console.log(disposition)
+                const matchArray = disposition.match(/filename=(.*)/);
+                const filename = matchArray[1];
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                console.log(downloadUrl);
+                console.log(filename);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        };
+        xhr.send([]);
+    })
+
+    $('#jobJsonInput').on('change',function () {
+        const file = this.files[0];
+        console.log(file);
+        var formData = new FormData();
+        formData.append('file', file); // 将文件添加到 FormData 对象中
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'your-server-endpoint', true);
+        xhr.onload = function () {
+            if (this.status >= 200 && this.status < 300) {
+                console.log('File uploaded successfully!');
+            } else {
+                console.error('Upload failed.');
+            }
+        };
+        xhr.send(formData);
+    })
+
+    $(".import").click(function(){
+        $('#jobJsonInput').click();
+    })
 });

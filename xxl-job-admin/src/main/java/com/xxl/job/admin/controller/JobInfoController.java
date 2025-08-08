@@ -2,6 +2,7 @@ package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.controller.interceptor.PermissionInterceptor;
 import com.xxl.job.admin.core.exception.XxlJobException;
+import com.xxl.job.admin.core.model.XxlJobCq;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobUser;
@@ -20,12 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -86,7 +89,12 @@ public class JobInfoController {
 		XxlJobUser loginUser = PermissionInterceptor.getLoginUser(request);
 		return xxlJobService.add(jobInfo, loginUser);
 	}
-	
+
+	@RequestMapping("/export")
+	public void export(HttpServletRequest request, HttpServletResponse response,@RequestBody(required = false) List<XxlJobCq> cqList) {
+		xxlJobService.export(response,cqList);
+	}
+
 	@RequestMapping("/update")
 	@ResponseBody
 	public ReturnT<String> update(HttpServletRequest request, XxlJobInfo jobInfo) {

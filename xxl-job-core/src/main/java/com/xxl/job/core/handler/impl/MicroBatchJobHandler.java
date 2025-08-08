@@ -29,12 +29,13 @@ public class MicroBatchJobHandler extends IJobHandler {
 
         // cmd
         String cmd = glueType.getCmd();
-        String scriptFileName="${HOME}/mb/spark/bin/start_spark_etl_job.sh";
+        String home=System.getProperty("user.home");
+            String scriptFileName=home+"/mb/spark/bin/start_spark_etl_job.sh";
         // log file
         String logFileName = XxlJobContext.getXxlJobContext().getJobLogFileName();
 
-        // script params：0=param、1=分片序号、2=分片总数
-        String[] scriptParams = new String[3];
+        // script params：0=job name、1=参数
+        String[] scriptParams = new String[2];
         scriptParams[0] = jobName.toUpperCase();
         scriptParams[1] = XxlJobHelper.getJobParam();
         // invoke
@@ -49,5 +50,13 @@ public class MicroBatchJobHandler extends IJobHandler {
             return ;
         }
 
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public GlueTypeEnum getGlueType() {
+        return glueType;
     }
 }

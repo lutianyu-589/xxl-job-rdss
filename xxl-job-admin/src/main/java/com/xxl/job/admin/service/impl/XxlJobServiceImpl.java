@@ -1,10 +1,10 @@
 package com.xxl.job.admin.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxl.job.admin.core.cron.CronExpression;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.model.XxlJobLogReport;
-import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.core.enums.CqJobRelation;
+import com.xxl.job.admin.core.model.*;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
@@ -23,8 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * core job action for xxl-job
@@ -485,4 +491,22 @@ public class XxlJobServiceImpl implements XxlJobService {
 		return new ReturnT<Map<String, Object>>(result);
 	}
 
+
+	@Override
+	public void export(HttpServletResponse response, List<XxlJobCq> cqList) {
+		List<XxlJobInfo> jobList = xxlJobInfoDao.export(new ArrayList<>());
+		List<XxlJobInfoEx> jobInfoExList = jobList.stream().map(job -> new XxlJobInfoEx(job, CqJobRelation.ADD)).collect(Collectors.toList());
+		ObjectMapper objectMapper = new ObjectMapper();
+		String filename="export.json";
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+        try (OutputStreamWriter writer=new OutputStreamWriter(response.getOutputStream(),StandardCharsets.UTF_8);
+			 BufferedWriter bw = new BufferedWriter(writer)
+		) {
+			bw.write(objectMapper.writeValueAsString(jobInfoExList));
+			bw.flush();
+        } catch (IOException e) {
+			logger.error(e.getMessage(), e);
+        }
+    }
 }

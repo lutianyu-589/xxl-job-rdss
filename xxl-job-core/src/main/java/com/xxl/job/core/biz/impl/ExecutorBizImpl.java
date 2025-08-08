@@ -8,6 +8,7 @@ import com.xxl.job.core.glue.GlueFactory;
 import com.xxl.job.core.glue.GlueTypeEnum;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.impl.GlueJobHandler;
+import com.xxl.job.core.handler.impl.MicroBatchJobHandler;
 import com.xxl.job.core.handler.impl.ScriptJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.thread.JobThread;
@@ -55,10 +56,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
         if(GlueTypeEnum.MICROBATCH==glueTypeEnum){
             // valid old jobThread
             if (jobThread != null &&
-                    !(jobThread.getHandler() instanceof ScriptJobHandler
-                            && ((ScriptJobHandler) jobThread.getHandler()).getGlueUpdatetime()==triggerParam.getGlueUpdatetime() )) {
+                    !(jobThread.getHandler() instanceof MicroBatchJobHandler
+                            && ((MicroBatchJobHandler) jobThread.getHandler()).getJobName()==triggerParam.getJobName() )) {
                 // change script or gluesource updated, need kill old thread
-                removeOldReason = "change job source or glue type, and terminate the old job thread.";
+                removeOldReason = "change job name or glue type, and terminate the old job thread.";
 
                 jobThread = null;
                 jobHandler = null;
@@ -66,7 +67,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
             // valid handler
             if (jobHandler == null) {
-                jobHandler = new ScriptJobHandler(triggerParam.getJobId(), triggerParam.getGlueUpdatetime(), triggerParam.getGlueSource(), GlueTypeEnum.match(triggerParam.getGlueType()));
+                jobHandler = new MicroBatchJobHandler(triggerParam.getJobId(), triggerParam.getJobName(), GlueTypeEnum.MICROBATCH);
             }
         }
         else if (GlueTypeEnum.BEAN == glueTypeEnum) {

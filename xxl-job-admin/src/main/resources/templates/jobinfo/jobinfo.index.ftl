@@ -66,7 +66,16 @@
 	            	<button class="btn btn-block btn-success add" type="button">${I18n.jobinfo_field_add}</button>
 	            </div>
           	</div>
-	    	
+	    	<div class="row" style="padding: 15px 0;align-items: end">
+                <div class="col-xs-10"></div>
+                <div class="col-xs-1">
+                    <button class="btn btn-block btn-success export" type="button">${I18n.jobinfo_export}</button>
+                </div>
+                <div class="col-xs-1">
+                    <input type="file" id="jobJsonInput" style="display:none;"/>
+                    <button class="btn btn-block btn-primary import" type="button">${I18n.jobinfo_import}</button>
+                </div>
+            </div>
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="box">
@@ -78,7 +87,8 @@
 				                <thead>
 					            	<tr>
 					            		<th name="id" >${I18n.jobinfo_field_id}</th>
-					                	<th name="jobGroup" >${I18n.jobinfo_field_jobgroup}</th>
+                                        <th name="jobName" >${I18n.jobinfo_field_job_name}</th>
+                                        <th name="jobGroup" >${I18n.jobinfo_field_jobgroup}</th>
 					                  	<th name="jobDesc" >${I18n.jobinfo_field_jobdesc}</th>
                                         <th name="scheduleType" >${I18n.schedule_type}</th>
                                         <th name="glueType" >${I18n.jobinfo_field_gluetype}</th>
@@ -126,10 +136,14 @@
 		            			</#list>
 		                  	</select>
 						</div>
+					</div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_job_name}<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobName" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_job_name}" maxlength="50" ></div>
 
                         <label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_jobdesc}<font color="red">*</font></label>
                         <div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_jobdesc}" maxlength="50" ></div>
-					</div>
+                    </div>
                     <div class="form-group">
                         <label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_author}<font color="red">*</font></label>
                         <div class="col-sm-4"><input type="text" class="form-control" name="author" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_author}" maxlength="50" ></div>
@@ -374,6 +388,10 @@ exit 0
                                 </#list>
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_job_name}<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobName" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_job_name}" maxlength="50" ></div>
 
                         <label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_jobdesc}<font color="red">*</font></label>
                         <div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_jobdesc}" maxlength="50" ></div>

@@ -74,6 +74,7 @@ public class WebhookAlarm implements JobAlarm {
 
     private WebhookRequest getRequestBody(XxlJobInfo info, XxlJobLog jobLog) {
         WebhookRequest webhookRequest = new WebhookRequest();
+        webhookRequest.setJobName(info.getJobName());
         webhookRequest.setAlarmContacts(info.getAlarmContacts());
         webhookRequest.setExecutorAddress(jobLog.getExecutorAddress());
         webhookRequest.setExecutorId(info.getJobGroup());

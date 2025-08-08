@@ -61,5 +61,5 @@ public interface XxlJobInfoDao {
 	 */
 	public int scheduleUpdate(XxlJobInfo xxlJobInfo);
 
-
+	public List<XxlJobInfo> export(@Param("list") List<String> jobNameList);
 }
