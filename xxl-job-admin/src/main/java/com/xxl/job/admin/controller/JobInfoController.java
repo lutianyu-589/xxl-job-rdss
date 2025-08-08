@@ -1,5 +1,8 @@
 package com.xxl.job.admin.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.xxl.job.admin.controller.interceptor.PermissionInterceptor;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobCq;
@@ -25,10 +28,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -91,8 +100,36 @@ public class JobInfoController {
 	}
 
 	@RequestMapping("/export")
-	public void export(HttpServletRequest request, HttpServletResponse response,@RequestBody(required = false) List<XxlJobCq> cqList) {
+	public void jobExport(HttpServletRequest request, HttpServletResponse response,@RequestBody(required = false) List<XxlJobCq> cqList) {
 		xxlJobService.export(response,cqList);
+	}
+
+	@RequestMapping("/import")
+	public void jobImport(HttpServletRequest request){
+		MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+		List<MultipartFile> files = multipartHttpServletRequest.getFiles("file");
+		String filename=files.get(0).getOriginalFilename();
+		if (!"".equals(filename)) {
+			String suffixName = filename.substring(filename.lastIndexOf("."));
+			filename = UUID.randomUUID() + suffixName;  //随机的新文件名
+		}
+		List<XxlJobInfo> infoList;
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		try(BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(files.get(0).getInputStream()))){
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				sb.append(line);
+			}
+			sb.append(line);
+			String str = sb.toString();
+			infoList=(List<XxlJobInfo>)objectMapper.readValue(str, List.class);
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+//			throw new RuntimeException(e);
+		}
 	}
 
 	@RequestMapping("/update")
