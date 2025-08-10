@@ -32,7 +32,7 @@
 	    <result column="glue_remark" property="glueRemark" />
 		<result column="glue_updatetime" property="glueUpdatetime" />
 
-		<result column="child_jobid" property="childJobId" />
+		<result column="child_job_name" property="childJobName" />
 
 		<result column="trigger_status" property="triggerStatus" />
 		<result column="trigger_last_time" property="triggerLastTime" />
@@ -62,7 +62,7 @@
 		t.glue_source,
 		t.glue_remark,
 		t.glue_updatetime,
-		t.child_jobid,
+		t.child_job_name,
 		t.trigger_status,
 		t.trigger_last_time,
 		t.trigger_next_time
@@ -96,6 +96,7 @@
 	<select id="export" resultMap="XxlJobInfo">
 	SELECT <include refid="Base_Column_List" />
 	FROM xxl_job_info AS t
+	where job_group = #{jobGroup}
 	ORDER BY t.job_name DESC
 	</select>
 
@@ -144,7 +145,7 @@
 			glue_source,
 			glue_remark,
 			glue_updatetime,
-			child_jobid,
+			child_job_name,
 			trigger_status,
 			trigger_last_time,
 			trigger_next_time
@@ -170,7 +171,7 @@
 			#{glueSource},
 			#{glueRemark},
 			#{glueUpdatetime},
-			#{childJobId},
+			#{childJobName},
 			#{triggerStatus},
 			#{triggerLastTime},
 			#{triggerNextTime}
@@ -209,7 +210,7 @@
 			glue_source = #{glueSource},
 			glue_remark = #{glueRemark},
 			glue_updatetime = #{glueUpdatetime},
-			child_jobid = #{childJobId},
+			child_job_name = #{childJobId},
 			trigger_status = #{triggerStatus},
 			trigger_last_time = #{triggerLastTime},
 			trigger_next_time = #{triggerNextTime}
@@ -241,6 +242,16 @@
 			and t.trigger_next_time <![CDATA[ <= ]]> #{maxNextTime}
 		ORDER BY id ASC
 		LIMIT #{pagesize}
+	</select>
+    <select id="findByJobNameAndGroup" resultMap="XxlJobInfo">
+		SELECT <include refid="Base_Column_List" /> from xxl_job_info AS t where t.job_name = #{jobName} and t.job_group=#{group} limit 1;
+	</select>
+	<select id="findJobIdsByJobNamesAndGroup" resultMap="XxlJobInfo">
+		SELECT <include refid="Base_Column_List" /> from xxl_job_info AS t where t.job_name in
+		 <foreach collection="list" item="item" open="(" close=")" separator=",">
+			 #{item.jobName}
+		 </foreach>
+		 and t.job_group=#{group} ;
 	</select>
 
 	<update id="scheduleUpdate" parameterType="com.xxl.job.admin.core.model.XxlJobInfo"  >

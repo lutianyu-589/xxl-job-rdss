@@ -99,5 +99,5 @@ public interface XxlJobService {
 	public ReturnT<Map<String,Object>> chartInfo(Date startDate, Date endDate);
 
 
-	public void export(HttpServletResponse response, List<XxlJobCq> cqList);
+	public void export(HttpServletResponse response, List<XxlJobCq> cqList,Integer groupId);
 }

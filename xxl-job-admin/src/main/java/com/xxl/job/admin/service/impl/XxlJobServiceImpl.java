@@ -1,6 +1,5 @@
 package com.xxl.job.admin.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.enums.CqJobRelation;
@@ -74,11 +73,21 @@ public class XxlJobServiceImpl implements XxlJobService {
 		if (group == null) {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_choose")+I18nUtil.getString("jobinfo_field_jobgroup")) );
 		}
-		if (jobInfo.getJobDesc()==null || jobInfo.getJobDesc().trim().length()==0) {
+		if (jobInfo.getJobDesc()==null || jobInfo.getJobDesc().trim().isEmpty()) {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_jobdesc")) );
 		}
-		if (jobInfo.getAuthor()==null || jobInfo.getAuthor().trim().length()==0) {
-			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_author")) );
+
+		if (jobInfo.getJobName()==null || jobInfo.getJobName().trim().isEmpty()) {
+			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_jobdesc")) );
+		}
+
+		if (jobInfo.getAuthor()==null || jobInfo.getAuthor().trim().isEmpty()) {
+			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_job_name")) );
+		}
+
+		// valid job name
+		if(xxlJobInfoDao.findByJobNameAndGroup(jobInfo.getJobName(),jobInfo.getJobGroup())!=null){
+			return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("jobinfo_field_job_name_duplicated") );
 		}
 
 		// valid trigger
@@ -127,34 +136,30 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_executorBlockStrategy")+I18nUtil.getString("system_unvalid")) );
 		}
 
-		// 》ChildJobId valid
-		if (jobInfo.getChildJobId()!=null && jobInfo.getChildJobId().trim().length()>0) {
-			String[] childJobIds = jobInfo.getChildJobId().split(",");
-			for (String childJobIdItem: childJobIds) {
-				if (childJobIdItem!=null && childJobIdItem.trim().length()>0 && isNumeric(childJobIdItem)) {
-					XxlJobInfo childJobInfo = xxlJobInfoDao.loadById(Integer.parseInt(childJobIdItem));
+		// 》ChildJobName valid
+		if (jobInfo.getChildJobName()!=null && jobInfo.getChildJobName().trim().length()>0) {
+			String[] childJobNames = jobInfo.getChildJobName().split(",");
+			for (String childJobNameItem: childJobNames) {
+				if (childJobNameItem!=null && !childJobNameItem.trim().isEmpty()) {
+					XxlJobInfo childJobInfo = xxlJobInfoDao.findByJobNameAndGroup(childJobNameItem,jobInfo.getJobGroup());
 					if (childJobInfo==null) {
 						return new ReturnT<String>(ReturnT.FAIL_CODE,
-								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_not_found")), childJobIdItem));
-					}
-					if (!loginUser.validPermission(childJobInfo.getJobGroup())) {
-						return new ReturnT<String>(ReturnT.FAIL_CODE,
-								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_permission_limit")), childJobIdItem));
+								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobName")+"({0})"+I18nUtil.getString("system_not_found")), childJobNameItem));
 					}
 				} else {
 					return new ReturnT<String>(ReturnT.FAIL_CODE,
-							MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_unvalid")), childJobIdItem));
+							MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobName")+"({0})"+I18nUtil.getString("system_unvalid")), childJobNameItem));
 				}
 			}
 
 			// join , avoid "xxx,,"
 			String temp = "";
-			for (String item:childJobIds) {
+			for (String item:childJobNames) {
 				temp += item + ",";
 			}
 			temp = temp.substring(0, temp.length()-1);
 
-			jobInfo.setChildJobId(temp);
+			jobInfo.setChildJobName(temp);
 		}
 
 		// add in db
@@ -224,40 +229,33 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		// 》ChildJobId valid
-		if (jobInfo.getChildJobId()!=null && jobInfo.getChildJobId().trim().length()>0) {
-			String[] childJobIds = jobInfo.getChildJobId().split(",");
-			for (String childJobIdItem: childJobIds) {
-				if (childJobIdItem!=null && childJobIdItem.trim().length()>0 && isNumeric(childJobIdItem)) {
-					// parse child
-					int childJobId = Integer.parseInt(childJobIdItem);
-					if (childJobId == jobInfo.getId()) {
-						return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_childJobId")+"("+childJobId+")"+I18nUtil.getString("system_unvalid")) );
+		if (jobInfo.getChildJobName()!=null && !jobInfo.getChildJobName().trim().isEmpty()) {
+			String[] childJobNames = jobInfo.getChildJobName().split(",");
+			for (String childJobNameItem: childJobNames) {
+				if (childJobNameItem!=null && !childJobNameItem.trim().isEmpty()) {
+					if (childJobNameItem.equals(jobInfo.getJobName())) {
+						return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_childJobName")+"("+childJobNameItem+")"+I18nUtil.getString("system_unvalid")) );
 					}
-
 					// valid child
-					XxlJobInfo childJobInfo = xxlJobInfoDao.loadById(childJobId);
+					XxlJobInfo childJobInfo = xxlJobInfoDao.findByJobNameAndGroup(childJobNameItem, jobInfo.getJobGroup());
 					if (childJobInfo==null) {
 						return new ReturnT<String>(ReturnT.FAIL_CODE,
-								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_not_found")), childJobIdItem));
-					}
-					if (!loginUser.validPermission(childJobInfo.getJobGroup())) {
-						return new ReturnT<String>(ReturnT.FAIL_CODE,
-								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_permission_limit")), childJobIdItem));
+								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobName")+"({0})"+I18nUtil.getString("system_not_found")), childJobNameItem));
 					}
 				} else {
 					return new ReturnT<String>(ReturnT.FAIL_CODE,
-							MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_unvalid")), childJobIdItem));
+							MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobName")+"({0})"+I18nUtil.getString("system_unvalid")), childJobNameItem));
 				}
 			}
 
 			// join , avoid "xxx,,"
 			String temp = "";
-			for (String item:childJobIds) {
+			for (String item:childJobNames) {
 				temp += item + ",";
 			}
 			temp = temp.substring(0, temp.length()-1);
 
-			jobInfo.setChildJobId(temp);
+			jobInfo.setChildJobName(temp);
 		}
 
 		// group valid
@@ -302,7 +300,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		exists_jobInfo.setExecutorBlockStrategy(jobInfo.getExecutorBlockStrategy());
 		exists_jobInfo.setExecutorTimeout(jobInfo.getExecutorTimeout());
 		exists_jobInfo.setExecutorFailRetryCount(jobInfo.getExecutorFailRetryCount());
-		exists_jobInfo.setChildJobId(jobInfo.getChildJobId());
+		exists_jobInfo.setChildJobName(jobInfo.getChildJobName());
 		exists_jobInfo.setTriggerNextTime(nextTriggerTime);
 		exists_jobInfo.setUpdateTime(new Date());
         xxlJobInfoDao.update(exists_jobInfo);
@@ -493,8 +491,8 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 
 	@Override
-	public void export(HttpServletResponse response, List<XxlJobCq> cqList) {
-		List<XxlJobInfo> jobList = xxlJobInfoDao.export(new ArrayList<>());
+	public void export(HttpServletResponse response, List<XxlJobCq> cqList,Integer groupId) {
+		List<XxlJobInfo> jobList = xxlJobInfoDao.export(new ArrayList<>(),groupId);
 		List<XxlJobInfoEx> jobInfoExList = jobList.stream().map(job -> new XxlJobInfoEx(job, CqJobRelation.ADD)).collect(Collectors.toList());
 		ObjectMapper objectMapper = new ObjectMapper();
 		String filename="export.json";

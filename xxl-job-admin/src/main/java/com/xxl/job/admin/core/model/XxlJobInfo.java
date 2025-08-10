@@ -38,7 +38,7 @@ public class XxlJobInfo {
     private String glueRemark;        // GLUE备注
     private Date glueUpdatetime;    // GLUE更新时间
 
-    private String childJobId;        // 子任务ID，多个逗号分隔
+    private String childJobName;        // 子任务名，多个逗号分隔
 
     private int triggerStatus;        // 调度状态：0-停止，1-运行
     private long triggerLastTime;    // 上次调度时间
@@ -67,7 +67,7 @@ public class XxlJobInfo {
         this.glueSource = job.getGlueSource();
         this.glueRemark = job.getGlueRemark();
         this.glueUpdatetime = job.getGlueUpdatetime();
-        this.childJobId = job.getChildJobId();
+        this.childJobName = job.getChildJobName();
         this.triggerStatus = job.getTriggerStatus();
         this.triggerLastTime = job.getTriggerLastTime();
         this.triggerNextTime = job.getTriggerNextTime();
@@ -234,12 +234,12 @@ public class XxlJobInfo {
         this.glueUpdatetime = glueUpdatetime;
     }
 
-    public String getChildJobId() {
-        return childJobId;
+    public String getChildJobName() {
+        return childJobName;
     }
 
-    public void setChildJobId(String childJobId) {
-        this.childJobId = childJobId;
+    public void setChildJobName(String childJobName) {
+        this.childJobName = childJobName;
     }
 
     public int getTriggerStatus() {

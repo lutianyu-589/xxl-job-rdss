@@ -100,8 +100,10 @@ public class JobInfoController {
 	}
 
 	@RequestMapping("/export")
-	public void jobExport(HttpServletRequest request, HttpServletResponse response,@RequestBody(required = false) List<XxlJobCq> cqList) {
-		xxlJobService.export(response,cqList);
+	public void jobExport(HttpServletRequest request, HttpServletResponse response,@RequestBody(required = false) Map<String,Object> param) {
+		List<XxlJobCq> cqList = (List<XxlJobCq>)param.get("cqList");
+		Integer groupId=(Integer)param.get("groupId");
+		xxlJobService.export(response,cqList,groupId);
 	}
 
 	@RequestMapping("/import")

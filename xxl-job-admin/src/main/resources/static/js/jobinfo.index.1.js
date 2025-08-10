@@ -580,7 +580,7 @@ $(function () {
 
         // fill advanced
         $('#updateModal .form select[name=executorRouteStrategy] option[value=' + row.executorRouteStrategy + ']').prop('selected', true);
-        $("#updateModal .form input[name='childJobId']").val(row.childJobId);
+        $("#updateModal .form input[name='childJobName']").val(row.childJobName);
         $('#updateModal .form select[name=misfireStrategy] option[value=' + row.misfireStrategy + ']').prop('selected', true);
         $('#updateModal .form select[name=executorBlockStrategy] option[value=' + row.executorBlockStrategy + ']').prop('selected', true);
         $("#updateModal .form input[name='executorTimeout']").val(row.executorTimeout);
@@ -737,7 +737,7 @@ $(function () {
 
         // fill advanced
         $('#addModal .form select[name=executorRouteStrategy] option[value=' + row.executorRouteStrategy + ']').prop('selected', true);
-        $("#addModal .form input[name='childJobId']").val(row.childJobId);
+        $("#addModal .form input[name='childJobName']").val(row.childJobName);
         $('#addModal .form select[name=misfireStrategy] option[value=' + row.misfireStrategy + ']').prop('selected', true);
         $('#addModal .form select[name=executorBlockStrategy] option[value=' + row.executorBlockStrategy + ']').prop('selected', true);
         $("#addModal .form input[name='executorTimeout']").val(row.executorTimeout);
@@ -778,7 +778,10 @@ $(function () {
                 document.body.removeChild(a);
             }
         };
-        xhr.send([]);
+        xhr.send({
+            cqList:[],
+            groupId: $('#jobGroup').val()
+        });
     })
 
     $('#jobJsonInput').on('change',function () {
