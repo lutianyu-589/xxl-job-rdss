@@ -115,6 +115,7 @@ public class JobInfoController {
 			String suffixName = filename.substring(filename.lastIndexOf("."));
 			filename = UUID.randomUUID() + suffixName;  //随机的新文件名
 		}
+		Integer groupId = Integer.parseInt(multipartHttpServletRequest.getParameter("groupId"),10);
 		List<XxlJobInfo> infoList;
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -128,10 +129,12 @@ public class JobInfoController {
 			sb.append(line);
 			String str = sb.toString();
 			infoList=(List<XxlJobInfo>)objectMapper.readValue(str, List.class);
+			logger.info(String.valueOf(infoList.size()));
 		} catch (IOException e) {
 			logger.error(e.getMessage(),e);
 //			throw new RuntimeException(e);
 		}
+
 	}
 
 	@RequestMapping("/update")

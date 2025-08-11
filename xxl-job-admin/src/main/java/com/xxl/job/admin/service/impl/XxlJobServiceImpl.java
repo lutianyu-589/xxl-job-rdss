@@ -507,4 +507,14 @@ public class XxlJobServiceImpl implements XxlJobService {
 			logger.error(e.getMessage(), e);
         }
     }
+
+	@Override
+	public void jobImport(List<XxlJobInfo> list, Integer groupId) {
+		List<String> jobNameList=list.stream().map(XxlJobInfo::getJobName).collect(Collectors.toList());
+		list.forEach(xxlJobInfo -> {
+			xxlJobInfo.setId(-1);
+			xxlJobInfo.setJobGroup(groupId);
+		});
+		List<XxlJobInfo>
+	}
 }

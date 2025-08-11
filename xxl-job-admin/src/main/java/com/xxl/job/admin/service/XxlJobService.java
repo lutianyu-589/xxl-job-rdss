@@ -100,4 +100,5 @@ public interface XxlJobService {
 
 
 	public void export(HttpServletResponse response, List<XxlJobCq> cqList,Integer groupId);
+	public void jobImport(List<XxlJobInfo> list,Integer groupId);
 }

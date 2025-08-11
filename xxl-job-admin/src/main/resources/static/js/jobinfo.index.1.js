@@ -778,10 +778,10 @@ $(function () {
                 document.body.removeChild(a);
             }
         };
-        xhr.send({
+        xhr.send(JSON.stringify({
             cqList:[],
-            groupId: $('#jobGroup').val()
-        });
+            groupId: Number($('#jobGroup').val())
+        }));
     })
 
     $('#jobJsonInput').on('change',function () {
@@ -789,9 +789,9 @@ $(function () {
         console.log(file);
         var formData = new FormData();
         formData.append('file', file); // 将文件添加到 FormData 对象中
-
+        formData.append('groupId',$('#jobGroup').val())
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'your-server-endpoint', true);
+        xhr.open('POST', base_url + "/jobinfo/import", true);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 console.log('File uploaded successfully!');
